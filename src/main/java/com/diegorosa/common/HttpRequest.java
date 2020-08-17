@@ -10,9 +10,9 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.Scanner;
 
-public class Http {
+public class HttpRequest {
 
-    public String request(String uri) {
+    public String get(String uri) {
         SimpleClientHttpRequestFactory factory =  new SimpleClientHttpRequestFactory();
 
         try {

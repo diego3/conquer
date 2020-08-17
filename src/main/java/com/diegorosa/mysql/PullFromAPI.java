@@ -1,6 +1,6 @@
 package com.diegorosa.mysql;
 
-import com.diegorosa.common.Http;
+import com.diegorosa.common.HttpRequest;
 
 public class PullFromAPI {
     private static final String URL_GOV = "http://compras.dados.gov.br/contratos/v1/contratos.json?uasg=20001&order_by=data_assinatura&order=desc";
@@ -12,7 +12,7 @@ public class PullFromAPI {
     private static void seed() {
         System.out.println("inicio do seed...");
 
-        String response = new Http().request(URL_GOV);
+        String response = new HttpRequest().get(URL_GOV);
 
 
     }
