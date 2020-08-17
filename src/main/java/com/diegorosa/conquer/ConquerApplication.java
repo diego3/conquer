@@ -26,7 +26,7 @@ public class ConquerApplication {
 	@GetMapping("/")
 	public String relatorio(Model model) {
 		model.addAttribute("name", "Diego");
-		return "relatorio1";
+		return "index";
 	}
 
 }

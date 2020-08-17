@@ -12,7 +12,7 @@
 	<artifactId>conquer</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>conquer</name>
-	<description>Demo project for Spring Boot</description>
+	<description>Conquer project</description>
 
 	<properties>
 		<java.version>1.8</java.version>

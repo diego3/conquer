@@ -1,0 +1,6 @@
+server:
+    port: 9090
+    http2:
+        enabled: true
+application:
+    gov_api: "http://compras.dados.gov.br/contratos/v1/contratos.json?uasg=20001&order_by=data_assinatura&order=desc"
