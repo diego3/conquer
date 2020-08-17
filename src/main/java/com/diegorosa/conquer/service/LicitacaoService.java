@@ -1,24 +1,21 @@
-package com.diegorosa.mysql;
+package com.diegorosa.conquer.service;
 
 import com.diegorosa.common.FileUtil;
+import com.diegorosa.conquer.entity.Contrato;
 import com.diegorosa.conquer.entity.ContratoRepository;
+import com.diegorosa.mysql.ContratoJsonObject;
 import com.google.gson.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
-import java.util.Date;
 
-import com.diegorosa.conquer.entity.Contrato;
-
-public class PullFromAPI {
-    private static final String URL_GOV = "http://compras.dados.gov.br/contratos/v1/contratos.json?uasg=20001&order_by=data_assinatura&order=desc";
+@Service
+public class LicitacaoService {
 
     @Autowired
     private ContratoRepository contratoRepository;
-
-    public static void main(String... args) {
-        new PullFromAPI().importaContratos();
-    }
 
     private ArrayList<ContratoJsonObject> parseContratos(String json) {
         Gson gson = new Gson();

@@ -19,14 +19,12 @@ public class HttpRequest {
             URI address = URI.create(uri);
 
             ClientHttpRequest request = factory.createRequest(address, HttpMethod.GET);
-            System.out.println("iniciando requisição...");
             ClientHttpResponse response = request.execute();
-            System.out.println("retornou");
             InputStream is = response.getBody();
-            Scanner s = new Scanner(is);
+            Scanner scan = new Scanner(is);
             StringBuffer buffer = new StringBuffer();
-            while(s.hasNext()) {
-                buffer.append(s.next());
+            while (scan.hasNext()) {
+                buffer.append(scan.next());
             }
             return buffer.toString();
         } catch (IOException e) {
