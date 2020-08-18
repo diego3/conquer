@@ -13,6 +13,7 @@ import java.util.ArrayList;
 
 @Service
 public class LicitacaoService {
+    private static final String URL_GOV = "http://compras.dados.gov.br/contratos/v1/contratos.json?uasg=20001&order_by=data_assinatura&order=desc";
 
     @Autowired
     private ContratoRepository contratoRepository;
@@ -76,12 +77,10 @@ public class LicitacaoService {
 
         ArrayList<ContratoJsonObject> contratos = parseContratos(response);
 
-        //TODO insert massivo
         ArrayList<Contrato> entities = new ArrayList<>();
-
         for (ContratoJsonObject json : contratos) {
             Contrato entity = new Contrato();
-            entity.setIdentificador(json.getIdentificador());
+            entity.setIdentificador(Long.valueOf(json.getIdentificador()));
             entity.setCnpjContratada(Long.valueOf(json.getCnpjContratada()).intValue());
             entity.setCodigoContrato(json.getCodigoContrato());
             entity.setCpfContratada(json.getCpfContratada());
@@ -95,7 +94,6 @@ public class LicitacaoService {
             entity.setValorInicial(json.getValorInicial());
             entity.setNumeroAvisoLicitacao(json.getNumeroAvisoLicitacao());
             entity.setModalidadeLicitacao(json.getModalidadeLicitacao());
-
 
             //entity.setDataAssinatura();
             entities.add(entity);

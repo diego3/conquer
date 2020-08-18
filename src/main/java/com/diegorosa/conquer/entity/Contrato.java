@@ -6,11 +6,12 @@ import java.util.Date;
 @Entity
 @Table(name = "contrato")
 public class Contrato {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    //@Id
+    //@GeneratedValue(strategy = GenerationType.IDENTITY)
+    //private Long id;
 
-    private String identificador;
+    @Id
+    private Long identificador;
     private Integer uasg;
     private Integer modalidadeLicitacao;
     private Integer numeroAvisoLicitacao;
@@ -28,19 +29,19 @@ public class Contrato {
     private Date dataTerminoVigencia;
     private Double valorInicial;
 
-    public Long getId() {
-        return id;
-    }
+    //public Long getId() {
+    //    return id;
+    //}
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    //public void setId(Long id) {
+    //    this.id = id;
+    //}
 
-    public String getIdentificador() {
+    public Long getIdentificador() {
         return identificador;
     }
 
-    public void setIdentificador(String identificador) {
+    public void setIdentificador(Long identificador) {
         this.identificador = identificador;
     }
 
