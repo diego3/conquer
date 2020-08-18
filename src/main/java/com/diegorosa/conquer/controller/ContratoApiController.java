@@ -1,6 +1,6 @@
 package com.diegorosa.conquer.controller;
 
-import com.diegorosa.conquer.service.LicitacaoService;
+import com.diegorosa.conquer.service.ContratoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ContratoApiController {
 
     @Autowired
-    private LicitacaoService service;
+    private ContratoService service;
 
     @PostMapping(value = "/sync", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> updateTableContrato() {
@@ -22,8 +22,8 @@ public class ContratoApiController {
             service.importaContratos();
         } catch (Exception e) {
             String body = String.format("{\"success\":false, \"error\":\"%s\"}", e.getMessage());
-            return new ResponseEntity<String>(body, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<String>("{\"success\": true}", HttpStatus.OK);
+        return new ResponseEntity<>("{\"success\": true}", HttpStatus.OK);
     }
 }

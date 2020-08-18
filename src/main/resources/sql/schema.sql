@@ -2,8 +2,7 @@ CREATE DATABASE conquer CHARSET utf8mb4;
 use conquer;
 
 create table contrato (
-	 id bigint primary key auto_increment,
-     identificador varchar(255)  not null,
+     identificador bigint not null primary key,
      uasg int not null,
      modalidade_licitacao int default null,
      numero_aviso_licitacao int  default null,
