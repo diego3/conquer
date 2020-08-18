@@ -8,11 +8,13 @@ import com.google.gson.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Service;
-
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.JdbcTemplate;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class ContratoService {
@@ -20,6 +22,58 @@ public class ContratoService {
 
     @Autowired
     private ContratoRepository contratoRepository;
+
+    public List<Contrato> findAll() {
+        return (List<Contrato>)contratoRepository.findAll();
+    }
+
+    public void findGroupedByCnpj() {
+        new JdbcTemplate();
+    }
+
+
+    public void importaContratos() {
+        System.out.println("inicio");
+        //String response = new HttpRequest().get(URL_GOV);
+        String response = FileUtil.convert(new FileSystemResource("src/main/resources/static/contratos-example.json"));
+
+        ArrayList<ContratoJsonObject> contratos = parseContratos(response);
+        ArrayList<Contrato> entities = new ArrayList<>();
+        for (ContratoJsonObject json : contratos) {
+            Contrato entity = new Contrato();
+            entity.setIdentificador(Long.valueOf(json.getIdentificador()));
+            entity.setCnpjContratada(Long.valueOf(json.getCnpjContratada()));
+            entity.setCodigoContrato(json.getCodigoContrato());
+            entity.setCpfContratada(json.getCpfContratada());
+            entity.setFundamentoLegal(json.getFundamentoLegal());
+            entity.setUasg(json.getUasg());
+            entity.setOrigemLicitacao(json.getOrigemLicitacao());
+            entity.setNumero(json.getNumero());
+            entity.setNumeroAditivo(json.getNumeroAditivo());
+            entity.setNumeroProcesso(json.getNumeroProcesso());
+            entity.setLicitacaoAssociada(json.getLicitacaoAssociada());
+            entity.setValorInicial(json.getValorInicial());
+            entity.setNumeroAvisoLicitacao(json.getNumeroAvisoLicitacao());
+            entity.setModalidadeLicitacao(json.getModalidadeLicitacao());
+
+            entity.setDataAssinatura(parse(json.getDataAssinatura()));
+            entity.setDataInicioVigencia(parse(json.getDataInicioVigencia()));
+            entity.setDataTerminoVigencia(parse(json.getDataTerminoVigencia()));
+
+            entities.add(entity);
+        }
+
+        contratoRepository.saveAll(entities);
+    }
+
+    private LocalDate parse(String date) {
+        try {
+            return LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        } catch (DateTimeParseException e) {
+            System.err.println("date parse error: "+e.getMessage());
+        }
+        return null;
+    }
 
     private ArrayList<ContratoJsonObject> parseContratos(String json) {
         Gson gson = new Gson();
@@ -73,46 +127,5 @@ public class ContratoService {
         return contratos;
     }
 
-    public void importaContratos() {
-        System.out.println("inicio");
-        //String response = new HttpRequest().get(URL_GOV);
-        String response = FileUtil.convert(new FileSystemResource("src/main/resources/static/contratos-example.json"));
 
-        ArrayList<ContratoJsonObject> contratos = parseContratos(response);
-        ArrayList<Contrato> entities = new ArrayList<>();
-        for (ContratoJsonObject json : contratos) {
-            Contrato entity = new Contrato();
-            entity.setIdentificador(Long.valueOf(json.getIdentificador()));
-            entity.setCnpjContratada(Long.valueOf(json.getCnpjContratada()));
-            entity.setCodigoContrato(json.getCodigoContrato());
-            entity.setCpfContratada(json.getCpfContratada());
-            entity.setFundamentoLegal(json.getFundamentoLegal());
-            entity.setUasg(json.getUasg());
-            entity.setOrigemLicitacao(json.getOrigemLicitacao());
-            entity.setNumero(json.getNumero());
-            entity.setNumeroAditivo(json.getNumeroAditivo());
-            entity.setNumeroProcesso(json.getNumeroProcesso());
-            entity.setLicitacaoAssociada(json.getLicitacaoAssociada());
-            entity.setValorInicial(json.getValorInicial());
-            entity.setNumeroAvisoLicitacao(json.getNumeroAvisoLicitacao());
-            entity.setModalidadeLicitacao(json.getModalidadeLicitacao());
-
-            entity.setDataAssinatura(parse(json.getDataAssinatura()));
-            entity.setDataInicioVigencia(parse(json.getDataInicioVigencia()));
-            entity.setDataTerminoVigencia(parse(json.getDataTerminoVigencia()));
-
-            entities.add(entity);
-        }
-
-        contratoRepository.saveAll(entities);
-    }
-
-    private LocalDate parse(String date) {
-        try {
-            return LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        } catch (DateTimeParseException e) {
-            System.err.println("date parse error: "+e.getMessage());
-        }
-        return null;
-    }
 }
