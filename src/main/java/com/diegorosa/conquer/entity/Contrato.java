@@ -1,6 +1,7 @@
 package com.diegorosa.conquer.entity;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
@@ -18,11 +19,11 @@ public class Contrato {
     private Integer numeroAditivo;
     private String numeroProcesso;
     private String cpfContratada;
-    private Integer cnpjContratada;
-    private Date dataAssinatura;
+    private Long cnpjContratada;
+    private LocalDate dataAssinatura;
     private String fundamentoLegal;
-    private Date dataInicioVigencia;
-    private Date dataTerminoVigencia;
+    private LocalDate dataInicioVigencia;
+    private LocalDate dataTerminoVigencia;
     private Double valorInicial;
 
     public Long getIdentificador() {
@@ -113,19 +114,19 @@ public class Contrato {
         this.cpfContratada = cpfContratada;
     }
 
-    public Integer getCnpjContratada() {
+    public Long getCnpjContratada() {
         return cnpjContratada;
     }
 
-    public void setCnpjContratada(Integer cnpjContratada) {
+    public void setCnpjContratada(Long cnpjContratada) {
         this.cnpjContratada = cnpjContratada;
     }
 
-    public Date getDataAssinatura() {
+    public LocalDate getDataAssinatura() {
         return dataAssinatura;
     }
 
-    public void setDataAssinatura(Date dataAssinatura) {
+    public void setDataAssinatura(LocalDate dataAssinatura) {
         this.dataAssinatura = dataAssinatura;
     }
 
@@ -137,19 +138,19 @@ public class Contrato {
         this.fundamentoLegal = fundamentoLegal;
     }
 
-    public Date getDataInicioVigencia() {
+    public LocalDate getDataInicioVigencia() {
         return dataInicioVigencia;
     }
 
-    public void setDataInicioVigencia(Date dataInicioVigencia) {
+    public void setDataInicioVigencia(LocalDate dataInicioVigencia) {
         this.dataInicioVigencia = dataInicioVigencia;
     }
 
-    public Date getDataTerminoVigencia() {
+    public LocalDate getDataTerminoVigencia() {
         return dataTerminoVigencia;
     }
 
-    public void setDataTerminoVigencia(Date dataTerminoVigencia) {
+    public void setDataTerminoVigencia(LocalDate dataTerminoVigencia) {
         this.dataTerminoVigencia = dataTerminoVigencia;
     }
 

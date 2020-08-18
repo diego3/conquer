@@ -9,6 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 
 @Service
@@ -76,12 +79,11 @@ public class ContratoService {
         String response = FileUtil.convert(new FileSystemResource("src/main/resources/static/contratos-example.json"));
 
         ArrayList<ContratoJsonObject> contratos = parseContratos(response);
-
         ArrayList<Contrato> entities = new ArrayList<>();
         for (ContratoJsonObject json : contratos) {
             Contrato entity = new Contrato();
             entity.setIdentificador(Long.valueOf(json.getIdentificador()));
-            entity.setCnpjContratada(Long.valueOf(json.getCnpjContratada()).intValue());
+            entity.setCnpjContratada(Long.valueOf(json.getCnpjContratada()));
             entity.setCodigoContrato(json.getCodigoContrato());
             entity.setCpfContratada(json.getCpfContratada());
             entity.setFundamentoLegal(json.getFundamentoLegal());
@@ -95,12 +97,22 @@ public class ContratoService {
             entity.setNumeroAvisoLicitacao(json.getNumeroAvisoLicitacao());
             entity.setModalidadeLicitacao(json.getModalidadeLicitacao());
 
-            //entity.setDataAssinatura();
+            entity.setDataAssinatura(parse(json.getDataAssinatura()));
+            entity.setDataInicioVigencia(parse(json.getDataInicioVigencia()));
+            entity.setDataTerminoVigencia(parse(json.getDataTerminoVigencia()));
+
             entities.add(entity);
         }
 
         contratoRepository.saveAll(entities);
-
     }
 
+    private LocalDate parse(String date) {
+        try {
+            return LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        } catch (DateTimeParseException e) {
+            System.err.println("date parse error: "+e.getMessage());
+        }
+        return null;
+    }
 }
