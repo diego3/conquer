@@ -1,11 +1,14 @@
 package com.diegorosa.conquer.controller;
 
+import com.diegorosa.common.MaskUtil;
 import com.diegorosa.conquer.entity.Contrato;
 import com.diegorosa.conquer.service.ContratoService;
 import com.opencsv.bean.StatefulBeanToCsv;
 import com.opencsv.bean.StatefulBeanToCsvBuilder;
 import com.opencsv.exceptions.CsvDataTypeMismatchException;
 import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -17,11 +20,23 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+class AgregadoCnpj {
+    public String cnpj;
+    public String valor;
+}
 
 @RestController
 @RequestMapping("/api/contrato")
 public class ContratoApiController {
+    private static final Logger logger = LoggerFactory.getLogger(ContratoApiController.class);
 
     @Autowired
     private ContratoService service;
@@ -39,20 +54,28 @@ public class ContratoApiController {
 
     @GetMapping(value = "/csv/cnpj", produces = "text/csv")
     public void downloadCsvPorCnpj(HttpServletResponse response) {
-
         List<Contrato> contratos = service.findAll();
 
-        try {
-             StatefulBeanToCsv<Contrato> builder = new StatefulBeanToCsvBuilder<Contrato>(response.getWriter())
-                     .build();
-             builder.write(contratos);
-        } catch (CsvRequiredFieldEmptyException e) {
-            e.printStackTrace();
-        } catch (CsvDataTypeMismatchException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Map<Long, Double> sum = contratos.stream()
+                .collect(Collectors.groupingBy(Contrato::getCnpjContratada,
+                            Collectors.summingDouble(Contrato::getValorInicial)));
 
+        DecimalFormat reaisFormat = new DecimalFormat("###,##0.00", new DecimalFormatSymbols(new Locale("pt", "BR")));
+        ArrayList<AgregadoCnpj> groupedBy = new ArrayList<>();
+        sum.forEach((key, value) -> {
+            AgregadoCnpj newAg = new AgregadoCnpj();
+            newAg.cnpj = new MaskUtil().maskCnpj(String.valueOf(key));
+            newAg.valor = reaisFormat.format(value);
+            groupedBy.add(newAg);
+        });
+
+        try {
+             StatefulBeanToCsv<AgregadoCnpj> builder = new StatefulBeanToCsvBuilder<AgregadoCnpj>(response.getWriter())
+                     .withSeparator(';')
+                     .build();
+             builder.write(groupedBy);
+        } catch (CsvRequiredFieldEmptyException | CsvDataTypeMismatchException | IOException e) {
+            logger.error(e.getMessage());
+        }
     }
 }

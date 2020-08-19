@@ -27,10 +27,15 @@ public class ContratoService {
         return (List<Contrato>)contratoRepository.findAll();
     }
 
+    public List<Contrato> findLast() {
+
+
+        return null;
+    }
+
     public void findGroupedByCnpj() {
         new JdbcTemplate();
     }
-
 
     public void importaContratos() {
         System.out.println("inicio");
