@@ -1,15 +1,19 @@
 package com.diegorosa.conquer.service;
 
 import com.diegorosa.common.FileUtil;
+import org.springframework.core.io.FileSystemResource;
+import com.diegorosa.common.HttpRequest;
 import com.diegorosa.conquer.entity.Contrato;
 import com.diegorosa.conquer.entity.ContratoRepository;
+import com.diegorosa.conquer.model.dto.DataAssinaturaResultDTO;
 import com.diegorosa.mysql.ContratoJsonObject;
 import com.google.gson.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Service;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.core.JdbcTemplate;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -23,24 +27,34 @@ public class ContratoService {
     @Autowired
     private ContratoRepository contratoRepository;
 
+    @PersistenceContext
+    private EntityManager em;
+
     public List<Contrato> findAll() {
         return (List<Contrato>)contratoRepository.findAll();
     }
 
-    public List<Contrato> findLast() {
-
-
-        return null;
+    public List<Contrato> findAllOrderedByDataAssinaturaDesc(Integer limit) {
+        String sql = "SELECT c from Contrato c ORDER BY c.dataAssinatura DESC";
+        TypedQuery<Contrato> query = em.createQuery(sql, Contrato.class);
+        query.setMaxResults(limit);
+        return query.getResultList();
     }
 
-    public void findGroupedByCnpj() {
-        new JdbcTemplate();
+    public List<DataAssinaturaResultDTO> findGroupedByDataAssinatura(Integer limit) {
+        String sql = "SELECT " +
+                "NEW com.diegorosa.conquer.model.dto.DataAssinaturaResultDTO(c.dataAssinatura, SUM(c.valorInicial)) " +
+                "FROM Contrato c GROUP BY c.dataAssinatura " +
+                "ORDER BY c.dataAssinatura DESC";
+        TypedQuery<DataAssinaturaResultDTO> query = em.createQuery(sql, DataAssinaturaResultDTO.class);
+        query.setMaxResults(limit);
+        return query.getResultList();
     }
 
     public void importaContratos() {
         System.out.println("inicio");
-        //String response = new HttpRequest().get(URL_GOV);
-        String response = FileUtil.convert(new FileSystemResource("src/main/resources/static/contratos-example.json"));
+        String response = new HttpRequest().get(URL_GOV);
+        //String response = FileUtil.convert(new FileSystemResource("src/main/resources/static/contratos-example.json"));
 
         ArrayList<ContratoJsonObject> contratos = parseContratos(response);
         ArrayList<Contrato> entities = new ArrayList<>();

@@ -2,6 +2,7 @@ package com.diegorosa.conquer.controller;
 
 import com.diegorosa.common.MaskUtil;
 import com.diegorosa.conquer.entity.Contrato;
+import com.diegorosa.conquer.model.dto.DataAssinaturaResultDTO;
 import com.diegorosa.conquer.service.ContratoService;
 import com.opencsv.bean.ColumnPositionMappingStrategy;
 import com.opencsv.bean.StatefulBeanToCsv;
@@ -14,10 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -65,6 +63,19 @@ public class ContratoApiController {
             return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>("{\"success\": true}", HttpStatus.OK);
+    }
+
+    @GetMapping(value="/csv/{type}", produces = "text/csv")
+    public void downloadCsv(@PathVariable String type, HttpServletResponse response) {
+
+    }
+
+    @GetMapping(value= {"/chart", "/chart/{limit}"}, produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<DataAssinaturaResultDTO> chartData(@PathVariable(required = false) Integer limit) {
+        if (limit == null || limit == 0) {
+            limit = 1000;
+        }
+        return service.findGroupedByDataAssinatura(limit);
     }
 
     @GetMapping(value = "/csv/cnpj", produces = "text/csv")
