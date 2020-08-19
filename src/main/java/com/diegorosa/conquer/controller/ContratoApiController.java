@@ -86,12 +86,12 @@ public class ContratoApiController {
                 .collect(Collectors.groupingBy(Contrato::getCnpjContratada,
                             Collectors.summingDouble(Contrato::getValorInicial)));
 
-        DecimalFormat reaisFormat = new DecimalFormat("###,##0.00", new DecimalFormatSymbols(new Locale("pt", "BR")));
+        MaskUtil maskformatter = new MaskUtil();
         ArrayList<AgregadoCnpj> groupedBy = new ArrayList<>();
         sum.forEach((key, value) -> {
             AgregadoCnpj newAg = new AgregadoCnpj();
-            newAg.cnpj = new MaskUtil().maskCnpj(String.valueOf(key));
-            newAg.valor = reaisFormat.format(value);
+            newAg.cnpj = maskformatter.maskCnpj(String.valueOf(key));
+            newAg.valor = maskformatter.maskMoedaReais(value);
             groupedBy.add(newAg);
         });
 
@@ -140,12 +140,12 @@ public class ContratoApiController {
                 .collect(Collectors.groupingBy(Contrato::getDataAssinatura,
                         Collectors.summingDouble(Contrato::getValorInicial)));
 
-        DecimalFormat reaisFormat = new DecimalFormat("###,##0.00", new DecimalFormatSymbols(new Locale("pt", "BR")));
+        MaskUtil maskformatter = new MaskUtil();
         ArrayList<AgregadoAssinatura> groupedBy = new ArrayList<>();
         sum.forEach((key, value) -> {
             AgregadoAssinatura newAg = new AgregadoAssinatura();
             newAg.dataAssinatura = key.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-            newAg.valor = reaisFormat.format(value);
+            newAg.valor = maskformatter.maskMoedaReais(value);
             newAg.dateAssinatura = key;
             groupedBy.add(newAg);
         });

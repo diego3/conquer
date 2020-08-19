@@ -51,6 +51,10 @@ public class ContratoService {
         return query.getResultList();
     }
 
+    /**
+     * Conecta-se à API do governo e importa para o Mysql
+     *
+     */
     public void importaContratos() {
         System.out.println("inicio");
         String response = new HttpRequest().get(URL_GOV);

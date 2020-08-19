@@ -42,68 +42,30 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#">
-                            <span data-feather="file"></span>
-                            Licitações
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">
                             <span data-feather="layers"></span>
-                            Fornecedores
+                            Licitações <span class="badge badge-primary">Em breve</span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#">
-                            <span data-feather="users"></span>
-                            Customers
+                            <span data-feather="truck"></span>
+                            Fornecedores <span class="badge badge-primary">Em breve</span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#">
-                            <span data-feather="bar-chart-2"></span>
-                            Reports
+                            <span data-feather="archive"></span>
+                            Materiais <span class="badge badge-primary">Em breve</span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#">
-                            <span data-feather="layers"></span>
-                            Integrations
+                            <span data-feather="clipboard"></span>
+                            Serviços <span class="badge badge-primary">Em breve</span>
                         </a>
                     </li>
                 </ul>
 
-                <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
-                    <span>Saved reports</span>
-                    <a class="d-flex align-items-center text-muted" href="#">
-                        <span data-feather="plus-circle"></span>
-                    </a>
-                </h6>
-                <ul class="nav flex-column mb-2">
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">
-                            <span data-feather="file-text"></span>
-                            Current month
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">
-                            <span data-feather="file-text"></span>
-                            Last quarter
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">
-                            <span data-feather="file-text"></span>
-                            Social engagement
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">
-                            <span data-feather="file-text"></span>
-                            Year-end sale
-                        </a>
-                    </li>
-                </ul>
             </div>
         </nav>
 
@@ -111,9 +73,6 @@
             <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
                 <h1 class="h2">Contratos - Compras</h1>
                 <div class="btn-toolbar mb-2 mb-md-0">
-<!--                    <div class="btn-group mr-2">-->
-<!--                        <button class="btn btn-sm btn-outline-secondary">Exportar CSV</button>-->
-<!--                    </div>-->
                     <div class="drowdown">
                         <button class="btn btn-sm btn-outline-secondary dropdown-toggle"
                                 id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -144,12 +103,11 @@
                     </thead>
                     <tbody>
 
-                    <!-- https://www.baeldung.com/thymeleaf-iteration -->
                     <tr th:each="contrato : ${contratos}">
-                        <td th:text="${contrato.cnpjContratada}"/>
-                        <td th:text="${contrato.dataAssinatura}"/>
+                        <td th:text="${contrato.cnpjFormatado}"/>
+                        <td th:text="${contrato.dataAssinaturaFormatada}"/>
                         <td th:text="${contrato.origemLicitacao}"/>
-                        <td th:text="${contrato.valorInicial}"/>
+                        <td th:text="${contrato.valorFormatado}"/>
                     </tr>
 
                     </tbody>
@@ -217,9 +175,7 @@
           fetch("/api/contrato/chart/14")
           .then(response => response.json())
           .then(data => {
-            for(let i = 0; i < data.length; i++){
-                console.log(data[i].dataAssinatura);
-                console.log(data[i].valorSomatoria);
+            for(let i = 0; i < data.length; i++) {
                 addData(myChart, data[i].dataAssinatura, data[i].valorSomatoria);
             }
           });

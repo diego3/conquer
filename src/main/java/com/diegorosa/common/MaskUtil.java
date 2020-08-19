@@ -1,14 +1,21 @@
 package com.diegorosa.common;
 
-import java.util.Stack;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
 
 public class MaskUtil {
+    private final DecimalFormat reaisFormat;
+
+    public MaskUtil() {
+        this.reaisFormat = new DecimalFormat("###,##0.00", new DecimalFormatSymbols(new Locale("pt", "BR")));
+    }
 
     public String maskCnpj(String valor) {
         if (valor == null || !valor.matches("\\d*")) {
             return "";
         }
-        String reversed = reverse(valor);
+        String reversed = StringUtil.reverse(valor);
         char[] chars = reversed.toCharArray();
         StringBuilder str = new StringBuilder();
         for(int i=0; i < chars.length; i++) {
@@ -24,22 +31,10 @@ public class MaskUtil {
             str.append(chars[i]);
         }
 
-        return reverse(str.toString());
+        return StringUtil.reverse(str.toString());
     }
 
-    private String reverse(String str) {
-        char[] chars = str.toCharArray();
-        Stack<Character> stack = new Stack<>();
-        for(char c: chars) {
-            stack.push(c);
-        }
-
-        StringBuilder strb = new StringBuilder();
-        while(!stack.isEmpty()) {
-            char last = stack.pop();
-            strb.append(last);
-        }
-
-        return strb.toString();
+    public String maskMoedaReais(Double valor) {
+        return "R$ "+reaisFormat.format(valor);
     }
 }
