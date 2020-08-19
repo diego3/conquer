@@ -3,6 +3,7 @@ package com.diegorosa.conquer.controller;
 import com.diegorosa.common.MaskUtil;
 import com.diegorosa.conquer.entity.Contrato;
 import com.diegorosa.conquer.service.ContratoService;
+import com.opencsv.bean.ColumnPositionMappingStrategy;
 import com.opencsv.bean.StatefulBeanToCsv;
 import com.opencsv.bean.StatefulBeanToCsvBuilder;
 import com.opencsv.exceptions.CsvDataTypeMismatchException;
@@ -22,15 +23,29 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 import java.util.stream.Collectors;
 
 class AgregadoCnpj {
     public String cnpj;
     public String valor;
+}
+
+class AgregadoOrigem {
+    public String origem;
+    public String valor;
+}
+
+class AgregadoAssinatura {
+    public String dataAssinatura;
+    public String valor;
+    public LocalDate dateAssinatura;
+
+    public LocalDate getDateAssinatura() {
+        return dateAssinatura;
+    }
 }
 
 @RestController
@@ -74,6 +89,69 @@ public class ContratoApiController {
                      .withSeparator(';')
                      .build();
              builder.write(groupedBy);
+        } catch (CsvRequiredFieldEmptyException | CsvDataTypeMismatchException | IOException e) {
+            logger.error(e.getMessage());
+        }
+    }
+
+    @GetMapping(value = "/csv/origem", produces = "text/csv")
+    public void downloadCsvPorOrigem(HttpServletResponse response) {
+        List<Contrato> contratos = service.findAll();
+
+        Map<String, Double> sum = contratos.stream()
+                .collect(Collectors.groupingBy(Contrato::getOrigemLicitacao,
+                        Collectors.summingDouble(Contrato::getValorInicial)));
+
+        DecimalFormat reaisFormat = new DecimalFormat("###,##0.00", new DecimalFormatSymbols(new Locale("pt", "BR")));
+        ArrayList<AgregadoOrigem> groupedBy = new ArrayList<>();
+        sum.forEach((key, value) -> {
+            AgregadoOrigem newAg = new AgregadoOrigem();
+            newAg.origem = key;
+            newAg.valor = reaisFormat.format(value);
+            groupedBy.add(newAg);
+        });
+
+        try {
+            StatefulBeanToCsv<AgregadoOrigem> builder = new StatefulBeanToCsvBuilder<AgregadoOrigem>(response.getWriter())
+                    .withSeparator(';')
+                    .build();
+            builder.write(groupedBy);
+        } catch (CsvRequiredFieldEmptyException | CsvDataTypeMismatchException | IOException e) {
+            logger.error(e.getMessage());
+        }
+    }
+
+    @GetMapping(value = "/csv/assinatura", produces = "text/csv")
+    public void downloadCsvPorAssinatura(HttpServletResponse response) {
+        List<Contrato> contratos = service.findAll();
+
+        Map<LocalDate, Double> sum = contratos.stream()
+                .collect(Collectors.groupingBy(Contrato::getDataAssinatura,
+                        Collectors.summingDouble(Contrato::getValorInicial)));
+
+        DecimalFormat reaisFormat = new DecimalFormat("###,##0.00", new DecimalFormatSymbols(new Locale("pt", "BR")));
+        ArrayList<AgregadoAssinatura> groupedBy = new ArrayList<>();
+        sum.forEach((key, value) -> {
+            AgregadoAssinatura newAg = new AgregadoAssinatura();
+            newAg.dataAssinatura = key.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+            newAg.valor = reaisFormat.format(value);
+            newAg.dateAssinatura = key;
+            groupedBy.add(newAg);
+        });
+
+        groupedBy.sort(Comparator.comparing(AgregadoAssinatura::getDateAssinatura).reversed());
+
+        try {
+            ColumnPositionMappingStrategy<AgregadoAssinatura> mappingStrategy = new ColumnPositionMappingStrategy<>();
+            mappingStrategy.setType(AgregadoAssinatura.class);
+            String[] columns = new String[] {"dataAssinatura", "valor"};
+            mappingStrategy.setColumnMapping(columns);
+
+            StatefulBeanToCsv<AgregadoAssinatura> builder = new StatefulBeanToCsvBuilder<AgregadoAssinatura>(response.getWriter())
+                    .withMappingStrategy(mappingStrategy)
+                    .withSeparator(';')
+                    .build();
+            builder.write(groupedBy);
         } catch (CsvRequiredFieldEmptyException | CsvDataTypeMismatchException | IOException e) {
             logger.error(e.getMessage());
         }

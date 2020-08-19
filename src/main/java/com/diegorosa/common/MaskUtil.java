@@ -5,6 +5,9 @@ import java.util.Stack;
 public class MaskUtil {
 
     public String maskCnpj(String valor) {
+        if (valor == null || !valor.matches("\\d*")) {
+            return "";
+        }
         String reversed = reverse(valor);
         char[] chars = reversed.toCharArray();
         StringBuilder str = new StringBuilder();
