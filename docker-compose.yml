@@ -2,24 +2,9 @@ version: "3.1"
 services:
     webserver:
       build:
-        - dockerfile: Dockerfile
+        context: .
+        dockerfile: Dockerfile
       container_name: conquer-webserver
-      working_dir: /application
-      volumes:
-          - .:/application
+      working_dir: /app
       ports:
-       - "9090:9090"
-
-    mysql:
-      image: mysql:8.0
-      container_name: conquer-mysql
-      working_dir: /application
-      volumes:
-        - .:/application
-      environment:
-        - MYSQL_ROOT_PASSWORD=conquer
-        - MYSQL_DATABASE=conquer
-        - MYSQL_USER=conquer
-        - MYSQL_PASSWORD=8feidf77s
-      ports:
-        - "9092:3306"
+        - "8182:8182"
