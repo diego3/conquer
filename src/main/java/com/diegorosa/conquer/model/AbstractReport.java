@@ -15,6 +15,7 @@ import java.util.List;
 
 public abstract class AbstractReport implements CsvReport {
     private static final Logger logger = LoggerFactory.getLogger(AbstractReport.class);
+    private static final char CSV_CHARACTER_SEPARATOR = ';';
 
     protected List<Contrato> contratos;
     protected Writer writer;
@@ -36,7 +37,7 @@ public abstract class AbstractReport implements CsvReport {
     protected <T> void generateCsv(ArrayList<T> result) {
         try {
             StatefulBeanToCsv<T> builder = new StatefulBeanToCsvBuilder<T>(writer)
-                    .withSeparator(';')
+                    .withSeparator(CSV_CHARACTER_SEPARATOR)
                     .build();
             builder.write(result);
         } catch (CsvRequiredFieldEmptyException | CsvDataTypeMismatchException e) {
