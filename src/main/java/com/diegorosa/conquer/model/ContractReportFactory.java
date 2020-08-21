@@ -13,9 +13,9 @@ public class ContractReportFactory {
         switch (type) {
             case CNPJ:
                 return new ContractReportByCnpj(contracts, writer);
-            case ORIGEM_LICITACAO:
-                return new ContractReportByCnpj(contracts, writer);
-            case DATA_ASSINATURA:
+            case ORIGEM:
+                return new ContractReportByOrigem(contracts, writer);
+            case ASSINATURA:
                 return new ContractReportByCnpj(contracts, writer);
             default:
                 throw new RuntimeException(String.format("O tipo [%s] de relatório é inválido", tipo));

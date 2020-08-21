@@ -2,8 +2,8 @@ package com.diegorosa.conquer.model;
 
 public enum ContractReportTypeEnum {
     CNPJ("cnpj"),
-    DATA_ASSINATURA("assinatura"),
-    ORIGEM_LICITACAO("origem");
+    ASSINATURA("assinatura"),
+    ORIGEM("origem");
 
     private String type;
 
