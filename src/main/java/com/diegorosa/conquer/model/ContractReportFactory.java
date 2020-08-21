@@ -1,20 +1,24 @@
 package com.diegorosa.conquer.model;
 
+import com.diegorosa.conquer.entity.Contrato;
+
+import java.io.Writer;
+import java.util.List;
+
 public class ContractReportFactory {
 
-    public static void createFromString(String tipo) {
-        ContractReportTypeEnum type = ContractReportTypeEnum.valueOf(tipo);
+    public static CsvReport create(String tipo, List<Contrato> contracts, Writer writer) {
+        ContractReportTypeEnum type = ContractReportTypeEnum.valueOf(tipo.toUpperCase());
 
         switch (type) {
             case CNPJ:
-                new ContractReportByCnpj();
-                break;
+                return new ContractReportByCnpj(contracts, writer);
             case ORIGEM_LICITACAO:
-                new ContractReportByCnpj();
-                break;
+                return new ContractReportByCnpj(contracts, writer);
             case DATA_ASSINATURA:
-                new ContractReportByCnpj();
-                break;
+                return new ContractReportByCnpj(contracts, writer);
+            default:
+                throw new RuntimeException(String.format("O tipo [%s] de relatório é inválido", tipo));
         }
     }
 }

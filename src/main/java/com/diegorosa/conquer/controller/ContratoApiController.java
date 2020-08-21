@@ -2,6 +2,9 @@ package com.diegorosa.conquer.controller;
 
 import com.diegorosa.common.MaskUtil;
 import com.diegorosa.conquer.entity.Contrato;
+import com.diegorosa.conquer.model.ContractReportFactory;
+import com.diegorosa.conquer.model.CsvReport;
+import com.diegorosa.conquer.model.dto.CsvCnpjMappingDTO;
 import com.diegorosa.conquer.model.dto.DataAssinaturaResultDTO;
 import com.diegorosa.conquer.service.ContratoService;
 import com.opencsv.bean.ColumnPositionMappingStrategy;
@@ -67,7 +70,14 @@ public class ContratoApiController {
 
     @GetMapping(value="/csv/{type}", produces = "text/csv")
     public void downloadCsv(@PathVariable String type, HttpServletResponse response) {
-
+        CsvReport report = null;
+        try {
+            report = ContractReportFactory.create(type, service.findAll(), response.getWriter());
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+        }
+        assert report != null;
+        report.generate();
     }
 
     @GetMapping(value= {"/chart", "/chart/{limit}"}, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -78,6 +88,7 @@ public class ContratoApiController {
         return service.findGroupedByDataAssinatura(limit);
     }
 
+    /*
     @GetMapping(value = "/csv/cnpj", produces = "text/csv")
     public void downloadCsvPorCnpj(HttpServletResponse response) {
         List<Contrato> contratos = service.findAll();
@@ -166,5 +177,5 @@ public class ContratoApiController {
         } catch (CsvRequiredFieldEmptyException | CsvDataTypeMismatchException | IOException e) {
             logger.error(e.getMessage());
         }
-    }
+    } */
 }
