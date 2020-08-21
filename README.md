@@ -16,6 +16,8 @@
  ```cmd
  mvn spring-boot:run 
 ```
+Se tudo ocorreu bem a aplicação estará disponível no endereço: http://localhost:9090
+
 Neste momento a table contrato estará vazia, para populá-la com os dados da api do governo
 existe um endpoint especial para isso:
 
