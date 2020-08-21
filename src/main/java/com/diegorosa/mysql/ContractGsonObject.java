@@ -1,6 +1,6 @@
 package com.diegorosa.mysql;
 
-public class ContratoJsonObject {
+public class ContractGsonObject {
     private String identificador;
     private Integer uasg;
     private Integer modalidade_licitacao;

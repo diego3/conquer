@@ -3,7 +3,7 @@ package com.diegorosa.conquer.controller;
 import com.diegorosa.common.MaskUtil;
 import com.diegorosa.conquer.entity.Contrato;
 import com.diegorosa.conquer.model.dto.ContratoListResultDTO;
-import com.diegorosa.conquer.service.ContratoService;
+import com.diegorosa.conquer.service.ContractService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,7 +17,7 @@ import java.util.List;
 public class DashboardController {
 
     @Autowired
-    private ContratoService service;
+    private ContractService service;
 
     @GetMapping("/")
     public String relatorio(Model model) {

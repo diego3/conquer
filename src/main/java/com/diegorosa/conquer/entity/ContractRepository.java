@@ -4,6 +4,6 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ContratoRepository extends CrudRepository<Contrato, Integer> {
+public interface ContractRepository extends CrudRepository<Contrato, Integer> {
 
 }

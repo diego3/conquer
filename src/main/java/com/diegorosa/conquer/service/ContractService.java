@@ -1,12 +1,10 @@
 package com.diegorosa.conquer.service;
 
-import com.diegorosa.common.FileUtil;
-import org.springframework.core.io.FileSystemResource;
 import com.diegorosa.common.HttpRequest;
 import com.diegorosa.conquer.entity.Contrato;
-import com.diegorosa.conquer.entity.ContratoRepository;
+import com.diegorosa.conquer.entity.ContractRepository;
 import com.diegorosa.conquer.model.dto.DataAssinaturaResultDTO;
-import com.diegorosa.mysql.ContratoJsonObject;
+import com.diegorosa.mysql.ContractGsonObject;
 import com.google.gson.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,17 +19,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class ContratoService {
+public class ContractService {
     private static final String URL_GOV = "http://compras.dados.gov.br/contratos/v1/contratos.json?uasg=20001&order_by=data_assinatura&order=desc";
 
     @Autowired
-    private ContratoRepository contratoRepository;
+    private ContractRepository contractRepository;
 
     @PersistenceContext
     private EntityManager em;
 
     public List<Contrato> findAll() {
-        return (List<Contrato>)contratoRepository.findAll();
+        return (List<Contrato>) contractRepository.findAll();
     }
 
     public List<Contrato> findAllOrderedByDataAssinaturaDesc(Integer limit) {
@@ -58,11 +56,10 @@ public class ContratoService {
     public void importaContratos() {
         System.out.println("inicio");
         String response = new HttpRequest().get(URL_GOV);
-        //String response = FileUtil.convert(new FileSystemResource("src/main/resources/static/contratos-example.json"));
 
-        ArrayList<ContratoJsonObject> contratos = parseContratos(response);
+        ArrayList<ContractGsonObject> contratos = parseContratos(response);
         ArrayList<Contrato> entities = new ArrayList<>();
-        for (ContratoJsonObject json : contratos) {
+        for (ContractGsonObject json : contratos) {
             Contrato entity = new Contrato();
             entity.setIdentificador(Long.valueOf(json.getIdentificador()));
             entity.setCnpjContratada(Long.valueOf(json.getCnpjContratada()));
@@ -86,7 +83,7 @@ public class ContratoService {
             entities.add(entity);
         }
 
-        contratoRepository.saveAll(entities);
+        contractRepository.saveAll(entities);
     }
 
     private LocalDate parse(String date) {
@@ -98,9 +95,9 @@ public class ContratoService {
         return null;
     }
 
-    private ArrayList<ContratoJsonObject> parseContratos(String json) {
+    private ArrayList<ContractGsonObject> parseContratos(String json) {
         Gson gson = new Gson();
-        ArrayList<ContratoJsonObject> contratos = new ArrayList<>();
+        ArrayList<ContractGsonObject> contratos = new ArrayList<>();
 
         JsonElement rootElement = null;
         try {
@@ -141,7 +138,7 @@ public class ContratoService {
                 continue;
             }
             try {
-                contratos.add(gson.fromJson(element, ContratoJsonObject.class));
+                contratos.add(gson.fromJson(element, ContractGsonObject.class));
             } catch (JsonSyntaxException e) {
                 System.out.println(String.format("json syntax error: %s", e.getMessage()));
             }
